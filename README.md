@@ -19,23 +19,23 @@ A modern, production-ready Next.js starter template featuring passwordless authe
 
 ```bash
 # PostgreSQL (main branch - default)
-npx create-next-app@latest my-app --example https://github.com/YOUR_USERNAME/next-starter
+npx create-next-app@latest my-app --example https://github.com/squirrelsoft-dev/next-starter
 
 # MSSQL
-npx create-next-app@latest my-app --example https://github.com/YOUR_USERNAME/next-starter/tree/mssql
+npx create-next-app@latest my-app --example https://github.com/squirrelsoft-dev/next-starter/tree/mssql
 
 # SQLite
-npx create-next-app@latest my-app --example https://github.com/YOUR_USERNAME/next-starter/tree/sqlite
+npx create-next-app@latest my-app --example https://github.com/squirrelsoft-dev/next-starter/tree/sqlite
 
 # Cloudflare D1
-npx create-next-app@latest my-app --example https://github.com/YOUR_USERNAME/next-starter/tree/cloudflare-d1
+npx create-next-app@latest my-app --example https://github.com/squirrelsoft-dev/next-starter/tree/cloudflare-d1
 ```
 
 ### Manual Setup
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/YOUR_USERNAME/next-starter.git
+   git clone https://github.com/squirrelsoft-dev/next-starter.git
    cd next-starter
    ```
 
