@@ -1,6 +1,8 @@
-# Next.js Starter with Passkeys
+# Next.js Starter with Passkeys (SQLite)
 
 A modern, production-ready Next.js starter template featuring passwordless authentication with WebAuthn passkeys, Auth.js v5, Prisma ORM, and shadcn/ui.
+
+**📦 Database: SQLite** - File-based database, perfect for development and small-scale deployments.
 
 ## ✨ Features
 
@@ -50,7 +52,7 @@ npx create-next-app@latest my-app --example https://github.com/YOUR_USERNAME/nex
    ```
 
    Edit `.env` and configure:
-   - `DATABASE_URL` - Your PostgreSQL connection string
+   - `DATABASE_URL` - SQLite file path (default: `file:./dev.db`)
    - `AUTH_SECRET` - Generate with `openssl rand -base64 32`
    - `RP_ID`, `RP_NAME`, `RP_ORIGIN` - WebAuthn configuration
 
@@ -73,28 +75,38 @@ npx create-next-app@latest my-app --example https://github.com/YOUR_USERNAME/nex
 
 ## 🗄️ Database Setup
 
-### PostgreSQL (Default)
+### SQLite (This Branch)
 
-**Local Development:**
+SQLite uses a file-based database that's automatically created when you run migrations. No server setup required!
+
+**Setup:**
 ```bash
-# Using Docker
-docker run --name postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d postgres
+# Initialize the database
+npx prisma db push
 
-# Or use Prisma's local development database
-npx prisma dev
+# Or create migrations
+npx prisma migrate dev --name init
 ```
 
-**Cloud Providers:**
-- [Neon](https://neon.tech) - Serverless PostgreSQL
-- [Supabase](https://supabase.com) - Open source Firebase alternative
-- [Railway](https://railway.app) - Easy deployment platform
-- [Vercel Postgres](https://vercel.com/postgres) - Postgres by Vercel
+The database file (`dev.db`) will be created in your `prisma/` directory.
+
+**Benefits:**
+- ✅ Zero configuration
+- ✅ No server needed
+- ✅ Perfect for development
+- ✅ Great for small apps and demos
+- ✅ Easy to backup (just copy the .db file)
+
+**Limitations:**
+- ⚠️ Not recommended for high-traffic production apps
+- ⚠️ Limited concurrent write operations
+- ⚠️ No built-in replication
 
 ### Other Databases
 
 Check out the respective branches for database-specific configurations:
+- `main` - PostgreSQL (production-ready)
 - `mssql` - Microsoft SQL Server
-- `sqlite` - SQLite (file-based)
 - `cloudflare-d1` - Cloudflare D1 (edge database)
 
 ## 🔐 Passkey Authentication
