@@ -199,7 +199,42 @@ NEXTAUTH_URL="https://yourdomain.com"
 - **Language**: [TypeScript](https://typescriptlang.org)
 
 ## 📝 Available Scripts
+
+### Development
+
+```bash
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run start        # Start production server
+npm run lint         # Run ESLint
 ```
+
+### Database Management
+
+```bash
+# Development workflow
+npm run db:push              # Quick schema sync (no migration files)
+npm run db:migrate           # Create and apply migration
+npm run db:migrate:create    # Create migration without applying
+npm run db:studio            # Open Prisma Studio (GUI)
+
+# Production deployment
+npm run db:migrate:deploy    # Apply migrations (CI/CD)
+
+# Prisma Client
+npm run db:generate          # Regenerate Prisma Client
+
+# Utilities
+npm run db:pull              # Pull schema from existing database
+npm run db:seed              # Run seed script
+npm run db:reset             # Reset database and rerun migrations
+npm run db:format            # Format schema.prisma file
+```
+
+**When to use what:**
+- **Development**: Use `npm run db:push` for rapid iteration
+- **Team collaboration**: Use `npm run db:migrate` to create migration files that can be committed
+- **Production**: Use `npm run db:migrate:deploy` in your CI/CD pipeline
 
 ## 🔧 Configuration
 
