@@ -75,9 +75,25 @@ npx create-next-app@latest my-app --example https://github.com/squirrelsoft-dev/
 
 ### PostgreSQL (Default)
 
-**Local Development:**
+**Local Development with Docker Compose (Recommended):**
 ```bash
-# Using Docker
+# Start PostgreSQL
+docker-compose up -d
+
+# Wait for database to be ready (health check)
+# Then initialize your database
+npm run db:push
+
+# Stop PostgreSQL when done
+docker-compose down
+
+# Stop and remove data (fresh start)
+docker-compose down -v
+```
+
+**Using Docker CLI:**
+```bash
+# Using Docker directly
 docker run --name postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d postgres
 
 # Then initialize your database
@@ -163,7 +179,7 @@ NEXTAUTH_URL="https://yourdomain.com"
 ├── prisma/
 │   └── schema.prisma            # Database schema
 ├── auth.ts                      # Auth.js configuration
-└── middleware.ts                # Auth middleware
+└── proxy.ts                     # Auth proxy (Next.js 16+)
 ```
 
 ## 🛠️ Tech Stack

@@ -25,13 +25,36 @@ export const authConfig = {
     error: "/auth/error",
   },
   callbacks: {
+    /**
+     * LAYER 1 DEFENSE: Proxy Middleware Authorization
+     *
+     * This callback determines if a request is authorized to proceed.
+     * It runs BEFORE any page or API route handler executes.
+     *
+     * Return true: Allow the request to proceed
+     * Return false: Redirect to sign-in page (Auth.js handles redirect)
+     *
+     * ROUTE AUTHORIZATION STRATEGY:
+     * ================================
+     *
+     * PUBLIC ROUTES (allow without auth):
+     * - None by default in this template
+     *
+     * Example - To add public routes:
+     * if (pathname === "/about" || pathname === "/pricing") {
+     *   return true;
+     * }
+     *
+     * PROTECTED ROUTES (require auth):
+     * - / (home page) - Requires authentication
+     * - /dashboard - Requires authentication
+     * - All other routes - Require authentication by default
+     */
     authorized: async ({ auth, request }) => {
       const { pathname } = request.nextUrl;
 
-      // Allow access to home page without authentication
-      if (pathname === "/") return true;
-
-      // All other pages require authentication
+      // All routes matched by the proxy require authentication
+      // If user is not authenticated, Auth.js redirects to /auth/signin
       return !!auth;
     },
   },
