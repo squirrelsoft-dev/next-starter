@@ -1,6 +1,8 @@
-# Next.js Starter with Passkeys
+# Next.js Starter with Passkeys (MSSQL)
 
 A modern, production-ready Next.js starter template featuring passwordless authentication with WebAuthn passkeys, Auth.js v5, Prisma ORM, and shadcn/ui.
+
+**📦 Database: Microsoft SQL Server** - Enterprise-grade database with Azure integration.
 
 ## ✨ Features
 
@@ -50,7 +52,7 @@ npx create-next-app@latest my-app --example https://github.com/YOUR_USERNAME/nex
    ```
 
    Edit `.env` and configure:
-   - `DATABASE_URL` - Your PostgreSQL connection string
+   - `DATABASE_URL` - Your SQL Server connection string
    - `AUTH_SECRET` - Generate with `openssl rand -base64 32`
    - `RP_ID`, `RP_NAME`, `RP_ORIGIN` - WebAuthn configuration
 
@@ -73,27 +75,48 @@ npx create-next-app@latest my-app --example https://github.com/YOUR_USERNAME/nex
 
 ## 🗄️ Database Setup
 
-### PostgreSQL (Default)
+### Microsoft SQL Server (This Branch)
 
-**Local Development:**
+SQL Server is perfect for enterprise applications and integrates seamlessly with Azure.
+
+**Local Development with Docker:**
 ```bash
-# Using Docker
-docker run --name postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d postgres
-
-# Or use Prisma's local development database
-npx prisma dev
+docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=YourStrong!Passw0rd" \
+  -p 1433:1433 --name mssql \
+  -d mcr.microsoft.com/mssql/server:2022-latest
 ```
 
-**Cloud Providers:**
-- [Neon](https://neon.tech) - Serverless PostgreSQL
-- [Supabase](https://supabase.com) - Open source Firebase alternative
-- [Railway](https://railway.app) - Easy deployment platform
-- [Vercel Postgres](https://vercel.com/postgres) - Postgres by Vercel
+**Setup:**
+```bash
+# Initialize the database
+npx prisma db push
+
+# Or create migrations
+npx prisma migrate dev --name init
+```
+
+**Azure SQL Database:**
+1. Create a SQL Database in Azure Portal
+2. Get the connection string from Azure
+3. Update your `.env` with the Azure connection string
+4. Run `npx prisma db push`
+
+**Benefits:**
+- ✅ Enterprise-grade reliability and security
+- ✅ Excellent Azure integration
+- ✅ Advanced features (stored procedures, triggers, etc.)
+- ✅ Strong T-SQL support
+- ✅ Built-in high availability options
+
+**Connection String Format:**
+```
+sqlserver://HOST:PORT;database=DATABASE;user=USER;password=PASSWORD;encrypt=true
+```
 
 ### Other Databases
 
 Check out the respective branches for database-specific configurations:
-- `mssql` - Microsoft SQL Server
+- `main` - PostgreSQL (production-ready)
 - `sqlite` - SQLite (file-based)
 - `cloudflare-d1` - Cloudflare D1 (edge database)
 
