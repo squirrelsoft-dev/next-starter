@@ -1,6 +1,8 @@
-# Next.js Starter with Passkeys
+# Next.js Starter with Passkeys (Cloudflare D1)
 
 A modern, production-ready Next.js starter template featuring passwordless authentication with WebAuthn passkeys, Auth.js v5, Prisma ORM, and shadcn/ui.
+
+**📦 Database: Cloudflare D1** - Serverless SQLite database running on Cloudflare's global edge network.
 
 ## ✨ Features
 
@@ -50,7 +52,7 @@ npx create-next-app@latest my-app --example https://github.com/YOUR_USERNAME/nex
    ```
 
    Edit `.env` and configure:
-   - `DATABASE_URL` - Your PostgreSQL connection string
+   - `DATABASE_URL` - SQLite file path (default: `file:./dev.db`)
    - `AUTH_SECRET` - Generate with `openssl rand -base64 32`
    - `RP_ID`, `RP_NAME`, `RP_ORIGIN` - WebAuthn configuration
 
@@ -73,29 +75,78 @@ npx create-next-app@latest my-app --example https://github.com/YOUR_USERNAME/nex
 
 ## 🗄️ Database Setup
 
-### PostgreSQL (Default)
+### Cloudflare D1 (This Branch)
+
+Cloudflare D1 is a serverless SQLite database that runs on Cloudflare's global network, perfect for edge applications.
 
 **Local Development:**
 ```bash
-# Using Docker
-docker run --name postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d postgres
+# Initialize the database (uses local SQLite file)
+npx prisma db push
 
-# Or use Prisma's local development database
-npx prisma dev
+# Or create migrations
+npx prisma migrate dev --name init
 ```
 
-**Cloud Providers:**
-- [Neon](https://neon.tech) - Serverless PostgreSQL
-- [Supabase](https://supabase.com) - Open source Firebase alternative
-- [Railway](https://railway.app) - Easy deployment platform
-- [Vercel Postgres](https://vercel.com/postgres) - Postgres by Vercel
+The database file (`dev.db`) will be created in your `prisma/` directory for local development.
+
+**Cloudflare D1 Production Setup:**
+
+1. **Install Wrangler CLI:**
+   ```bash
+   npm install -g wrangler
+   wrangler login
+   ```
+
+2. **Create D1 Database:**
+   ```bash
+   wrangler d1 create next-starter-db
+   ```
+
+3. **Create `wrangler.toml`:**
+   ```toml
+   name = "next-starter"
+   compatibility_date = "2024-01-01"
+
+   [[d1_databases]]
+   binding = "DB"
+   database_name = "next-starter-db"
+   database_id = "your-database-id-from-step-2"
+   ```
+
+4. **Run Migrations on D1:**
+   ```bash
+   # Generate SQL from Prisma schema
+   npx prisma migrate diff \
+     --from-empty \
+     --to-schema-datamodel prisma/schema.prisma \
+     --script > migrations/init.sql
+
+   # Apply to D1
+   wrangler d1 execute next-starter-db --file=migrations/init.sql
+   ```
+
+5. **Deploy to Cloudflare Pages:**
+   ```bash
+   npm run build
+   npx wrangler pages deploy .next
+   ```
+
+**Benefits:**
+- ✅ Runs on Cloudflare's global edge network
+- ✅ Low latency worldwide
+- ✅ Serverless and auto-scaling
+- ✅ SQLite-compatible
+- ✅ Free tier available
+
+**Note:** D1 is SQLite-compatible, so you develop locally with SQLite and deploy to D1 for production.
 
 ### Other Databases
 
 Check out the respective branches for database-specific configurations:
+- `main` - PostgreSQL (production-ready)
 - `mssql` - Microsoft SQL Server
 - `sqlite` - SQLite (file-based)
-- `cloudflare-d1` - Cloudflare D1 (edge database)
 
 ## 🔐 Passkey Authentication
 

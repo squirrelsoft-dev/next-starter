@@ -7,7 +7,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
+  // For Cloudflare D1, use sqlite syntax
+  // D1 is SQLite-compatible and runs on Cloudflare's edge network
 }
 
 // Auth.js v5 Models with Passkey Support
