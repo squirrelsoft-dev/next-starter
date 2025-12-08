@@ -1,36 +1,265 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Next.js Starter with Passkeys
 
-## Getting Started
+A modern, production-ready Next.js starter template featuring passwordless authentication with WebAuthn passkeys, Auth.js v5, Prisma ORM, and shadcn/ui.
 
-First, run the development server:
+## ✨ Features
+
+- 🔐 **Passkey Authentication** - Secure, passwordless authentication using WebAuthn
+- ⚡ **Next.js 16** - Latest Next.js with App Router and Server Actions
+- 🎨 **shadcn/ui** - Beautiful, accessible UI components
+- 🗄️ **Prisma ORM** - Type-safe database access
+- 🔒 **Auth.js v5** - Modern authentication with NextAuth beta
+- 📱 **Device Biometrics** - Face ID, Touch ID, Windows Hello support
+- 🚀 **TypeScript** - Full type safety
+- 🎯 **Multi-Database Support** - PostgreSQL, MSSQL, SQLite, Cloudflare D1 (different branches)
+
+## 🚀 Quick Start
+
+### Using create-next-app (Recommended)
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# PostgreSQL (main branch - default)
+npx create-next-app@latest my-app --example https://github.com/YOUR_USERNAME/next-starter
+
+# MSSQL
+npx create-next-app@latest my-app --example https://github.com/YOUR_USERNAME/next-starter/tree/mssql
+
+# SQLite
+npx create-next-app@latest my-app --example https://github.com/YOUR_USERNAME/next-starter/tree/sqlite
+
+# Cloudflare D1
+npx create-next-app@latest my-app --example https://github.com/YOUR_USERNAME/next-starter/tree/cloudflare-d1
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Manual Setup
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/YOUR_USERNAME/next-starter.git
+   cd next-starter
+   ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-## Learn More
+3. **Set up environment variables**
+   ```bash
+   cp .env.example .env
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+   Edit `.env` and configure:
+   - `DATABASE_URL` - Your PostgreSQL connection string
+   - `AUTH_SECRET` - Generate with `openssl rand -base64 32`
+   - `RP_ID`, `RP_NAME`, `RP_ORIGIN` - WebAuthn configuration
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+4. **Set up the database**
+   ```bash
+   # Push the schema to your database
+   npx prisma db push
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+   # Or create a migration
+   npx prisma migrate dev --name init
+   ```
 
-## Deploy on Vercel
+5. **Run the development server**
+   ```bash
+   npm run dev
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+6. **Open your browser**
+   Navigate to [http://localhost:3000](http://localhost:3000)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🗄️ Database Setup
+
+### PostgreSQL (Default)
+
+**Local Development:**
+```bash
+# Using Docker
+docker run --name postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d postgres
+
+# Or use Prisma's local development database
+npx prisma dev
+```
+
+**Cloud Providers:**
+- [Neon](https://neon.tech) - Serverless PostgreSQL
+- [Supabase](https://supabase.com) - Open source Firebase alternative
+- [Railway](https://railway.app) - Easy deployment platform
+- [Vercel Postgres](https://vercel.com/postgres) - Postgres by Vercel
+
+### Other Databases
+
+Check out the respective branches for database-specific configurations:
+- `mssql` - Microsoft SQL Server
+- `sqlite` - SQLite (file-based)
+- `cloudflare-d1` - Cloudflare D1 (edge database)
+
+## 🔐 Passkey Authentication
+
+### How It Works
+
+1. **Registration**: User provides an email and clicks "Register Passkey"
+   - Browser prompts for biometric authentication (Face ID, Touch ID, etc.)
+   - A cryptographic key pair is generated on the device
+   - Public key is stored in your database
+   - Private key stays on the user's device (never transmitted)
+
+2. **Sign In**: User clicks "Sign In with Passkey"
+   - Browser prompts for biometric authentication
+   - Device signs a challenge with the private key
+   - Server verifies the signature with the stored public key
+   - User is authenticated!
+
+### Browser Support
+
+Passkeys work on:
+- ✅ Chrome/Edge 108+
+- ✅ Safari 16+
+- ✅ Firefox 119+
+
+Devices:
+- ✅ iPhone/iPad (iOS 16+)
+- ✅ Mac (macOS Ventura+)
+- ✅ Android (9+)
+- ✅ Windows (10+)
+- ✅ Hardware security keys (YubiKey, etc.)
+
+### Production Deployment
+
+When deploying to production, update your `.env`:
+
+```bash
+# Your production domain
+RP_ID="yourdomain.com"
+RP_NAME="Your App Name"
+RP_ORIGIN="https://yourdomain.com"
+NEXTAUTH_URL="https://yourdomain.com"
+```
+
+**Important**: Passkeys are tied to your domain. Testing with `localhost` creates different credentials than production.
+
+## 📁 Project Structure
+
+```
+├── app/
+│   ├── api/auth/[...nextauth]/  # Auth.js API routes
+│   ├── auth/                     # Authentication pages
+│   │   ├── signin/              # Sign in/register page
+│   │   └── error/               # Error page
+│   ├── dashboard/               # Protected dashboard
+│   ├── generated/prisma/        # Generated Prisma Client
+│   ├── globals.css              # Global styles
+│   └── page.tsx                 # Home page
+├── components/
+│   ├── auth/                    # Auth components
+│   │   └── signin-form.tsx      # Passkey sign-in form
+│   └── ui/                      # shadcn/ui components
+├── lib/
+│   ├── db.ts                    # Prisma client singleton
+│   └── utils.ts                 # Utility functions
+├── prisma/
+│   └── schema.prisma            # Database schema
+├── auth.ts                      # Auth.js configuration
+└── middleware.ts                # Auth middleware
+```
+
+## 🛠️ Tech Stack
+
+- **Framework**: [Next.js 16](https://nextjs.org)
+- **Authentication**: [Auth.js v5 (NextAuth)](https://authjs.dev)
+- **Database ORM**: [Prisma](https://prisma.io)
+- **UI Components**: [shadcn/ui](https://ui.shadcn.com)
+- **Styling**: [Tailwind CSS 4](https://tailwindcss.com)
+- **Language**: [TypeScript](https://typescriptlang.org)
+
+## 📝 Available Scripts
+
+```bash
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run start        # Start production server
+npm run lint         # Run ESLint
+npx prisma studio    # Open Prisma Studio (database GUI)
+npx prisma generate  # Generate Prisma Client
+npx prisma db push   # Push schema changes to database
+```
+
+## 🔧 Configuration
+
+### Adding OAuth Providers
+
+Want to add Google, GitHub, etc.? Edit `auth.ts`:
+
+```typescript
+import Google from "next-auth/providers/google";
+
+export const authConfig = {
+  providers: [
+    Passkey({ /* ... */ }),
+    Google({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    }),
+  ],
+  // ...
+};
+```
+
+### Customizing the UI
+
+shadcn/ui components are in `components/ui/`. Customize them directly:
+
+```bash
+# Add more components
+npx shadcn@latest add dialog
+npx shadcn@latest add dropdown-menu
+```
+
+### Database Schema Changes
+
+1. Edit `prisma/schema.prisma`
+2. Generate migration: `npx prisma migrate dev --name your_change`
+3. Or push directly: `npx prisma db push`
+
+## 🌐 Deployment
+
+### Vercel (Recommended)
+
+1. Push your code to GitHub
+2. Import to [Vercel](https://vercel.com)
+3. Add environment variables
+4. Deploy!
+
+Vercel automatically detects Next.js and configures everything.
+
+### Other Platforms
+
+This template works on any platform that supports Node.js:
+- Netlify
+- Railway
+- Fly.io
+- AWS Amplify
+- DigitalOcean App Platform
+
+## 🤝 Contributing
+
+Contributions are welcome! Feel free to open issues or submit pull requests.
+
+## 📄 License
+
+MIT License - feel free to use this template for any project!
+
+## 🔗 Resources
+
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Auth.js Documentation](https://authjs.dev)
+- [Prisma Documentation](https://prisma.io/docs)
+- [shadcn/ui Documentation](https://ui.shadcn.com)
+- [WebAuthn Guide](https://webauthn.guide)
+
+---
+
+**Built with ❤️ using Next.js, Auth.js, and Passkeys**
