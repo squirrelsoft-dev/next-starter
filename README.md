@@ -58,11 +58,11 @@ npx create-next-app@latest my-app --example https://github.com/squirrelsoft-dev/
 
 4. **Set up the database**
    ```bash
-   # Push the schema to your database
-   npx prisma db push
+   # Quick setup (no migration files)
+   npm run db:push
 
-   # Or create a migration
-   npx prisma migrate dev --name init
+   # Or create a migration (recommended for teams)
+   npm run db:migrate
    ```
 
 5. **Run the development server**
@@ -89,17 +89,17 @@ docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=YourStrong!Passw0rd" \
 **Setup:**
 ```bash
 # Initialize the database
-npx prisma db push
+npm run db:push
 
 # Or create migrations
-npx prisma migrate dev --name init
+npm run db:migrate
 ```
 
 **Azure SQL Database:**
 1. Create a SQL Database in Azure Portal
 2. Get the connection string from Azure
 3. Update your `.env` with the Azure connection string
-4. Run `npx prisma db push`
+4. Run `npm run db:push`
 
 **Benefits:**
 - ✅ Enterprise-grade reliability and security
@@ -199,15 +199,6 @@ NEXTAUTH_URL="https://yourdomain.com"
 - **Language**: [TypeScript](https://typescriptlang.org)
 
 ## 📝 Available Scripts
-
-```bash
-npm run dev          # Start development server
-npm run build        # Build for production
-npm run start        # Start production server
-npm run lint         # Run ESLint
-npx prisma studio    # Open Prisma Studio (database GUI)
-npx prisma generate  # Generate Prisma Client
-npx prisma db push   # Push schema changes to database
 ```
 
 ## 🔧 Configuration
@@ -244,8 +235,14 @@ npx shadcn@latest add dropdown-menu
 ### Database Schema Changes
 
 1. Edit `prisma/schema.prisma`
-2. Generate migration: `npx prisma migrate dev --name your_change`
-3. Or push directly: `npx prisma db push`
+2. Apply changes:
+   ```bash
+   # Quick sync (development)
+   npm run db:push
+
+   # Or create migration (team collaboration)
+   npm run db:migrate
+   ```
 
 ## 🌐 Deployment
 
