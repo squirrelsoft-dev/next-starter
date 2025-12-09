@@ -10,11 +10,11 @@ export const authConfig = {
     Passkey({
       // Relying Party ID - your domain (localhost for dev)
       // This should match RP_ID in your .env file
-      rpID: process.env.RP_ID || "localhost",
-      // Relying Party Name - shown in the passkey creation dialog
-      rpName: process.env.RP_NAME || "Next.js Starter with Passkeys",
-      // Origin - full URL of your app
-      origin: process.env.RP_ORIGIN || "http://localhost:3000",
+      relayingParty: {
+        id: process.env.RP_ID || "localhost",
+        name: process.env.RP_NAME || "Next.js Starter with Passkeys",
+        origin: process.env.RP_ORIGIN || "http://localhost:3000",
+      }
     }),
   ],
   session: {
