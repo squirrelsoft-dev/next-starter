@@ -1,8 +1,6 @@
-# Next.js Starter with Passkeys (SQLite)
+# Next.js Starter with Passkeys
 
 A modern, production-ready Next.js starter template featuring passwordless authentication with WebAuthn passkeys, Auth.js v5, Prisma ORM, and shadcn/ui.
-
-**📦 Database: SQLite** - File-based database, perfect for development and small-scale deployments.
 
 ## ✨ Features
 
@@ -52,7 +50,7 @@ npx create-next-app@latest my-app --example https://github.com/squirrelsoft-dev/
    ```
 
    Edit `.env` and configure:
-   - `DATABASE_URL` - SQLite file path (default: `file:./dev.db`)
+   - `DATABASE_URL` - Your PostgreSQL connection string
    - `AUTH_SECRET` - Generate with `openssl rand -base64 32`
    - `RP_ID`, `RP_NAME`, `RP_ORIGIN` - WebAuthn configuration
 
@@ -75,38 +73,44 @@ npx create-next-app@latest my-app --example https://github.com/squirrelsoft-dev/
 
 ## 🗄️ Database Setup
 
-### SQLite (This Branch)
+### PostgreSQL (Default)
 
-SQLite uses a file-based database that's automatically created when you run migrations. No server setup required!
-
-**Setup:**
+**Local Development with Docker Compose (Recommended):**
 ```bash
-# Initialize the database
+# Start PostgreSQL
+docker-compose up -d
+
+# Wait for database to be ready (health check)
+# Then initialize your database
 npm run db:push
 
-# Or create migrations
-npm run db:migrate
+# Stop PostgreSQL when done
+docker-compose down
+
+# Stop and remove data (fresh start)
+docker-compose down -v
 ```
 
-The database file (`dev.db`) will be created in your `prisma/` directory.
+**Using Docker CLI:**
+```bash
+# Using Docker directly
+docker run --name postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d postgres
 
-**Benefits:**
-- ✅ Zero configuration
-- ✅ No server needed
-- ✅ Perfect for development
-- ✅ Great for small apps and demos
-- ✅ Easy to backup (just copy the .db file)
+# Then initialize your database
+npm run db:push
+```
 
-**Limitations:**
-- ⚠️ Not recommended for high-traffic production apps
-- ⚠️ Limited concurrent write operations
-- ⚠️ No built-in replication
+**Cloud Providers:**
+- [Neon](https://neon.tech) - Serverless PostgreSQL
+- [Supabase](https://supabase.com) - Open source Firebase alternative
+- [Railway](https://railway.app) - Easy deployment platform
+- [Vercel Postgres](https://vercel.com/postgres) - Postgres by Vercel
 
 ### Other Databases
 
 Check out the respective branches for database-specific configurations:
-- `main` - PostgreSQL (production-ready)
 - `mssql` - Microsoft SQL Server
+- `sqlite` - SQLite (file-based)
 - `cloudflare-d1` - Cloudflare D1 (edge database)
 
 ## 🔐 Passkey Authentication
@@ -175,7 +179,7 @@ NEXTAUTH_URL="https://yourdomain.com"
 ├── prisma/
 │   └── schema.prisma            # Database schema
 ├── auth.ts                      # Auth.js configuration
-└── middleware.ts                # Auth middleware
+└── proxy.ts                     # Auth proxy (Next.js 16+)
 ```
 
 ## 🛠️ Tech Stack

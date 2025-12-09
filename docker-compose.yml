@@ -1,0 +1,35 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: next-starter-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: next_starter
+      # Optional: Timezone configuration
+      TZ: UTC
+      # Optional: Performance tuning for development
+      POSTGRES_INITDB_ARGS: "-E UTF8 --locale=C"
+    volumes:
+      # Persist database data
+      - postgres_data:/var/lib/postgresql/data
+      # Optional: Custom initialization scripts
+      # - ./docker/init-scripts:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d next_starter"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - next-starter-network
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  next-starter-network:
+    driver: bridge
