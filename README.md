@@ -1,8 +1,6 @@
-# Next.js Starter with Passkeys (Cloudflare D1)
+# Next.js Starter with Passkeys
 
 A modern, production-ready Next.js starter template featuring passwordless authentication with WebAuthn passkeys, Auth.js v5, Prisma ORM, and shadcn/ui.
-
-**📦 Database: Cloudflare D1** - Serverless SQLite database running on Cloudflare's global edge network.
 
 ## ✨ Features
 
@@ -52,16 +50,16 @@ npx create-next-app@latest my-app --example https://github.com/squirrelsoft-dev/
    ```
 
    Edit `.env` and configure:
-   - `DATABASE_URL` - SQLite file path (default: `file:./dev.db`)
+   - `DATABASE_URL` - Your PostgreSQL connection string
    - `AUTH_SECRET` - Generate with `openssl rand -base64 32`
    - `RP_ID`, `RP_NAME`, `RP_ORIGIN` - WebAuthn configuration
 
 4. **Set up the database**
    ```bash
-   # Push the schema to your database
+   # Quick setup (no migration files)
    npm run db:push
 
-   # Or create a migration
+   # Or create a migration (recommended for teams)
    npm run db:migrate
    ```
 
@@ -75,78 +73,45 @@ npx create-next-app@latest my-app --example https://github.com/squirrelsoft-dev/
 
 ## 🗄️ Database Setup
 
-### Cloudflare D1 (This Branch)
+### PostgreSQL (Default)
 
-Cloudflare D1 is a serverless SQLite database that runs on Cloudflare's global network, perfect for edge applications.
-
-**Local Development:**
+**Local Development with Docker Compose (Recommended):**
 ```bash
-# Initialize the database (uses local SQLite file)
+# Start PostgreSQL
+docker-compose up -d
+
+# Wait for database to be ready (health check)
+# Then initialize your database
 npm run db:push
 
-# Or create migrations
-npm run db:migrate
+# Stop PostgreSQL when done
+docker-compose down
+
+# Stop and remove data (fresh start)
+docker-compose down -v
 ```
 
-The database file (`dev.db`) will be created in your `prisma/` directory for local development.
+**Using Docker CLI:**
+```bash
+# Using Docker directly
+docker run --name postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d postgres
 
-**Cloudflare D1 Production Setup:**
+# Then initialize your database
+npm run db:push
+```
 
-1. **Install Wrangler CLI:**
-   ```bash
-   npm install -g wrangler
-   wrangler login
-   ```
-
-2. **Create D1 Database:**
-   ```bash
-   wrangler d1 create next-starter-db
-   ```
-
-3. **Create `wrangler.toml`:**
-   ```toml
-   name = "next-starter"
-   compatibility_date = "2024-01-01"
-
-   [[d1_databases]]
-   binding = "DB"
-   database_name = "next-starter-db"
-   database_id = "your-database-id-from-step-2"
-   ```
-
-4. **Run Migrations on D1:**
-   ```bash
-   # Generate SQL from Prisma schema
-   npx prisma migrate diff \
-     --from-empty \
-     --to-schema-datamodel prisma/schema.prisma \
-     --script > migrations/init.sql
-
-   # Apply to D1
-   wrangler d1 execute next-starter-db --file=migrations/init.sql
-   ```
-
-5. **Deploy to Cloudflare Pages:**
-   ```bash
-   npm run build
-   npx wrangler pages deploy .next
-   ```
-
-**Benefits:**
-- ✅ Runs on Cloudflare's global edge network
-- ✅ Low latency worldwide
-- ✅ Serverless and auto-scaling
-- ✅ SQLite-compatible
-- ✅ Free tier available
-
-**Note:** D1 is SQLite-compatible, so you develop locally with SQLite and deploy to D1 for production.
+**Cloud Providers:**
+- [Neon](https://neon.tech) - Serverless PostgreSQL
+- [Supabase](https://supabase.com) - Open source Firebase alternative
+- [Railway](https://railway.app) - Easy deployment platform
+- [Vercel Postgres](https://vercel.com/postgres) - Postgres by Vercel
 
 ### Other Databases
 
 Check out the respective branches for database-specific configurations:
-- `main` - PostgreSQL (production-ready)
 - `mssql` - Microsoft SQL Server
 - `sqlite` - SQLite (file-based)
+- `cloudflare-d1` - Cloudflare D1 (edge database)
 
 ## 🔐 Passkey Authentication
 
@@ -214,7 +179,7 @@ NEXTAUTH_URL="https://yourdomain.com"
 ├── prisma/
 │   └── schema.prisma            # Database schema
 ├── auth.ts                      # Auth.js configuration
-└── middleware.ts                # Auth middleware
+└── proxy.ts                     # Auth proxy (Next.js 16+)
 ```
 
 ## 🛠️ Tech Stack

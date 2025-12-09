@@ -2,14 +2,12 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client"
-  output   = "../app/generated/prisma"
+  provider = "prisma-client-js"
+  output   = "../app/generated/prisma/client"
 }
 
 datasource db {
   provider = "sqlite"
-  // For Cloudflare D1, use sqlite syntax
-  // D1 is SQLite-compatible and runs on Cloudflare's edge network
 }
 
 // Auth.js v5 Models with Passkey Support
