@@ -37,7 +37,7 @@ function main() {
   printHeader();
 
   const hasEnv = checkFileExists('.env');
-  const hasPrismaGenerated = checkFileExists('node_modules/@prisma/client');
+  const hasPrismaGenerated = checkFileExists('app/generated/prisma/client');
   const hasNodeModules = checkFileExists('node_modules');
 
   // If everything is set up, show a success message
@@ -100,6 +100,6 @@ function main() {
 
 // Only run if this is a fresh install (no Prisma client generated yet)
 // This prevents the message from showing on every npm install
-if (!checkFileExists('node_modules/@prisma/client') || !checkFileExists('.env')) {
+if (!checkFileExists('app/generated/prisma/client') || !checkFileExists('.env')) {
   main();
 }

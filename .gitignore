@@ -43,3 +43,6 @@ next-env.d.ts
 
 # Environment variables
 .env
+
+# Prisma generated client
+/app/generated/prisma
