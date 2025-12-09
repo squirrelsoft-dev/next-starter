@@ -1,8 +1,6 @@
-# Next.js Starter with Passkeys (MSSQL)
+# Next.js Starter with Passkeys
 
 A modern, production-ready Next.js starter template featuring passwordless authentication with WebAuthn passkeys, Auth.js v5, Prisma ORM, and shadcn/ui.
-
-**📦 Database: Microsoft SQL Server** - Enterprise-grade database with Azure integration.
 
 ## ✨ Features
 
@@ -52,7 +50,7 @@ npx create-next-app@latest my-app --example https://github.com/squirrelsoft-dev/
    ```
 
    Edit `.env` and configure:
-   - `DATABASE_URL` - Your SQL Server connection string
+   - `DATABASE_URL` - Your PostgreSQL connection string
    - `AUTH_SECRET` - Generate with `openssl rand -base64 32`
    - `RP_ID`, `RP_NAME`, `RP_ORIGIN` - WebAuthn configuration
 
@@ -75,48 +73,43 @@ npx create-next-app@latest my-app --example https://github.com/squirrelsoft-dev/
 
 ## 🗄️ Database Setup
 
-### Microsoft SQL Server (This Branch)
+### PostgreSQL (Default)
 
-SQL Server is perfect for enterprise applications and integrates seamlessly with Azure.
-
-**Local Development with Docker:**
+**Local Development with Docker Compose (Recommended):**
 ```bash
-docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=YourStrong!Passw0rd" \
-  -p 1433:1433 --name mssql \
-  -d mcr.microsoft.com/mssql/server:2022-latest
-```
+# Start PostgreSQL
+docker-compose up -d
 
-**Setup:**
-```bash
-# Initialize the database
+# Wait for database to be ready (health check)
+# Then initialize your database
 npm run db:push
 
-# Or create migrations
-npm run db:migrate
+# Stop PostgreSQL when done
+docker-compose down
+
+# Stop and remove data (fresh start)
+docker-compose down -v
 ```
 
-**Azure SQL Database:**
-1. Create a SQL Database in Azure Portal
-2. Get the connection string from Azure
-3. Update your `.env` with the Azure connection string
-4. Run `npm run db:push`
+**Using Docker CLI:**
+```bash
+# Using Docker directly
+docker run --name postgres -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d postgres
 
-**Benefits:**
-- ✅ Enterprise-grade reliability and security
-- ✅ Excellent Azure integration
-- ✅ Advanced features (stored procedures, triggers, etc.)
-- ✅ Strong T-SQL support
-- ✅ Built-in high availability options
+# Then initialize your database
+npm run db:push
+```
 
-**Connection String Format:**
-```
-sqlserver://HOST:PORT;database=DATABASE;user=USER;password=PASSWORD;encrypt=true
-```
+**Cloud Providers:**
+- [Neon](https://neon.tech) - Serverless PostgreSQL
+- [Supabase](https://supabase.com) - Open source Firebase alternative
+- [Railway](https://railway.app) - Easy deployment platform
+- [Vercel Postgres](https://vercel.com/postgres) - Postgres by Vercel
 
 ### Other Databases
 
 Check out the respective branches for database-specific configurations:
-- `main` - PostgreSQL (production-ready)
+- `mssql` - Microsoft SQL Server
 - `sqlite` - SQLite (file-based)
 - `cloudflare-d1` - Cloudflare D1 (edge database)
 
@@ -186,7 +179,7 @@ NEXTAUTH_URL="https://yourdomain.com"
 ├── prisma/
 │   └── schema.prisma            # Database schema
 ├── auth.ts                      # Auth.js configuration
-└── middleware.ts                # Auth middleware
+└── proxy.ts                     # Auth proxy (Next.js 16+)
 ```
 
 ## 🛠️ Tech Stack
